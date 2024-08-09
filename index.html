@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Firebase App y Firestore desde el CDN -->
+    <script type="module">
+      // Importar las funciones que necesitas desde el SDK
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Configuración de Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyD2g6uBkFH0rkTtJbjL5WkF6WpShwNPyBM",
+        authDomain: "saved-words-2ec39.firebaseapp.com",
+        projectId: "saved-words-2ec39",
+        storageBucket: "saved-words-2ec39.appspot.com",
+        messagingSenderId: "54193351992",
+        appId: "1:54193351992:web:07e0287c0414a3d33fe5cd"
+      };
+
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Hacer las funciones de Firestore disponibles globalmente
+      window.db = db;
+      window.collection = collection;
+      window.doc = doc;
+      window.setDoc = setDoc;
+      window.getDocs = getDocs;
+      window.deleteDoc = deleteDoc;
+      window.onSnapshot = onSnapshot;
+    </script>
+
+    <!-- Tu script principal -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Word Analyzer</h1>
+        <textarea id="textInput" placeholder="Paste or write your text here..."></textarea>
+        <button id="analyzeButton">Analyze Text</button>
+        <button id="viewSavedWordsButton" onclick="window.open('saved_words.html', '_blank')">View Saved Words</button>
+
+        <div id="wordList" class="hidden">
+            <h2>Word List</h2>
+            <div id="wordsContainer"></div>
+        </div>
+
+        <div id="highlightedTextContainer" class="hidden">
+            <h2>Text with Highlighted Unknown Words</h2>
+            <div id="highlightedText"></div>
+        </div>
+    </div>
+</body>
+</html>
