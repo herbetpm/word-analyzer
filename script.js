@@ -32,7 +32,7 @@ function syncWordsRealTime() {
 
 function analyzeText() {
     const textInput = document.getElementById('textInput').value.toLowerCase();
-    const wordsArray = textInput.match(/\b\w+\b/g);
+    const wordsArray = textInput.match(/\b[\w']+\b/g); // Modificado para incluir contracciones
     const uniqueWords = [...new Set(wordsArray)];
 
     const newWords = uniqueWords.filter(word => !knownWords.has(word) && !unknownWords.has(word));
