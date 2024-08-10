@@ -5,6 +5,10 @@ document.getElementById('analyzeButton').addEventListener('click', () => {
     analyzeText();
 });
 
+document.getElementById('clearButton').addEventListener('click', () => {
+    clearAnalyzedText();
+});
+
 function syncWordsRealTime() {
     const wordsCollection = collection(db, "words");
 
@@ -26,20 +30,15 @@ function syncWordsRealTime() {
     });
 }
 
-async function analyzeText() {
-    const textInput = document.getElementById('textInput');
-    const textValue = textInput.value.toLowerCase();
-    const wordsArray = textValue.match(/\b\w+\b/g);
+function analyzeText() {
+    const textInput = document.getElementById('textInput').value.toLowerCase();
+    const wordsArray = textInput.match(/\b\w+\b/g);
     const uniqueWords = [...new Set(wordsArray)];
 
-    // Filtrar palabras nuevas
     const newWords = uniqueWords.filter(word => !knownWords.has(word) && !unknownWords.has(word));
 
     displayWords(newWords);
-    highlightText(); // Asegura que el texto siempre se resalte, incluso si no hay nuevas palabras
-
-    // Borra el campo de texto después de analizar
-    textInput.value = '';
+    highlightText();
 }
 
 function displayWords(words = []) {
@@ -113,6 +112,14 @@ function highlightText() {
 
     highlightedTextContainer.innerHTML = highlightedText;
     document.getElementById('highlightedTextContainer').classList.remove('hidden');
+}
+
+function clearAnalyzedText() {
+    document.getElementById('textInput').value = ''; // Borra el campo de entrada de texto
+    document.getElementById('highlightedTextContainer').classList.add('hidden'); // Oculta el contenedor del texto resaltado
+    document.getElementById('highlightedText').innerHTML = ''; // Limpia el contenido resaltado
+    document.getElementById('wordsContainer').innerHTML = ''; // Limpia la lista de nuevas palabras
+    document.getElementById('wordList').classList.add('hidden'); // Oculta la lista de palabras
 }
 
 // Escuchar cambios en tiempo real y actualizar la interfaz
