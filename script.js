@@ -26,15 +26,20 @@ function syncWordsRealTime() {
     });
 }
 
-function analyzeText() {
-    const textInput = document.getElementById('textInput').value.toLowerCase();
-    const wordsArray = textInput.match(/\b\w+\b/g);
+async function analyzeText() {
+    const textInput = document.getElementById('textInput');
+    const textValue = textInput.value.toLowerCase();
+    const wordsArray = textValue.match(/\b\w+\b/g);
     const uniqueWords = [...new Set(wordsArray)];
 
+    // Filtrar palabras nuevas
     const newWords = uniqueWords.filter(word => !knownWords.has(word) && !unknownWords.has(word));
 
     displayWords(newWords);
-    highlightText();
+    highlightText(); // Asegura que el texto siempre se resalte, incluso si no hay nuevas palabras
+
+    // Borra el campo de texto después de analizar
+    textInput.value = '';
 }
 
 function displayWords(words = []) {
