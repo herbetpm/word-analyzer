@@ -19,9 +19,9 @@ function syncWordsRealTime() {
         snapshot.forEach((doc) => {
             const wordData = doc.data();
             if (wordData.category === 'known') {
-                knownWords.add(wordData.word);
+                knownWords.add(wordData.word.toLowerCase());
             } else if (wordData.category === 'unknown') {
-                unknownWords.add(wordData.word);
+                unknownWords.add(wordData.word.toLowerCase());
             }
         });
 
@@ -31,11 +31,12 @@ function syncWordsRealTime() {
 }
 
 function analyzeText() {
-    const textInput = document.getElementById('textInput').value.toLowerCase();
-    const wordsArray = textInput.match(/\b[\w']+\b/g); // Modificado para incluir contracciones
+    const textInput = document.getElementById('textInput').value;
+    // Modificación de la expresión regular para incluir diferentes tipos de apóstrofes y guiones
+    const wordsArray = textInput.match(/\b[\w'’\-]+\b/g); 
     const uniqueWords = [...new Set(wordsArray)];
 
-    const newWords = uniqueWords.filter(word => !knownWords.has(word) && !unknownWords.has(word));
+    const newWords = uniqueWords.filter(word => !knownWords.has(word.toLowerCase()) && !unknownWords.has(word.toLowerCase()));
 
     displayWords(newWords);
     highlightText();
@@ -78,18 +79,18 @@ function displayWords(words = []) {
 
 async function markWordAs(word, status, wordItem) {
     try {
-        const docRef = doc(db, "words", word);
+        const docRef = doc(db, "words", word.toLowerCase());
         await setDoc(docRef, {
-            word: word,
+            word: word.toLowerCase(),
             category: status
         });
 
         if (status === 'known') {
-            knownWords.add(word);
-            unknownWords.delete(word);
+            knownWords.add(word.toLowerCase());
+            unknownWords.delete(word.toLowerCase());
         } else {
-            unknownWords.add(word);
-            knownWords.delete(word);
+            unknownWords.add(word.toLowerCase());
+            knownWords.delete(word.toLowerCase());
         }
 
         wordItem.remove(); // Remove the word from the list after it's classified
@@ -106,7 +107,8 @@ function highlightText() {
     let highlightedText = textInput;
 
     unknownWords.forEach(word => {
-        const regex = new RegExp(`\\b${word}\\b`, 'gi');
+        // Usar una expresión regular que considere los diferentes apóstrofes y guiones
+        const regex = new RegExp(`\\b${word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'gi');
         highlightedText = highlightedText.replace(regex, `<span class="highlight">${word}</span>`);
     });
 
